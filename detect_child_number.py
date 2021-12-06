@@ -1,17 +1,10 @@
 import os
-import cv2
 import pytesseract
 import numpy as np
-import re
 import sys
-from PIL import Image
-from sklearn import svm
-from sklearn.model_selection import KFold
-from sklearn import naive_bayes
-from sklearn import neighbors
+
 from spellchecker import SpellChecker
 from pdf2image import convert_from_path
-from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import cross_val_score
 from pytesseract import Output
 from PIL import Image
@@ -33,7 +26,7 @@ def __run__():
     for file in os.listdir("PDF"):
         print("[INFO]   Openning %s file for data preparation" % file)
 
-        count_child = 0
+        count_child_final = 0
 
         # Load pdf images
         images = convert_from_path("PDF/" + file, use_pdftocairo=True, strict=False,
@@ -41,6 +34,7 @@ def __run__():
 
         # For each images of each documents
         for image in images[1:]:
+            count_child = 0
             image = np.array(image)
 
             # Converting image in gray scale
@@ -88,9 +82,11 @@ def __run__():
 
                     count_child += detect_child(result_txt_cleaned)
 
-                    print("[INFO]      %s count %s childs after process" % (file, count_child))
                 except:
                     pass
+
+            count_child_final += count_child
+        print("[INFO]      %s count %s childs after process" % (file, count_child_final))
 
 def clean_text(text):
     text_split = text.split(sep="\n")
@@ -124,7 +120,7 @@ def detect_child(text):
             try:
                 # Case : "naissance + CASE_NUMBER + noise
                 if word == "naissance" and words[words.index(word) + 1] in CASE_NUMBER and len(
-                        words[words.index(word) + 2]) > 1:
+                        words[words.index(word) + 2]) >= 1:
                     count_child += 1
                 elif word == "naissance" and words[words.index(word) + 1] not in CASE_NUMBER and len(
                         words[words.index(word) + 1]) > 1:
