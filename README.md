@@ -9,3 +9,5 @@ Après avoir correctement installés les dépendances (requierements.txt et outi
 
 Le point d'entré du projet est le script detect_child_number.py  
 `python detecte_child_number.py`
+
+Arthur BARIBEAUD - Etienne MONTHIEUX - Mathilde VIRONDEAU - Paul REVERSAC
